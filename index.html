@@ -5,30 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TruckitRater</title>
     <style>
-        body{font-family:Arial,sans-serif;margin:0;padding:20px;background:#121212;color:#e0e0e0}
-        h1{text-align:center;color:#00ff00;margin-bottom:10px;text-shadow:0 0 10px rgba(0,255,0,.3)}
-        .container{max-width:900px;margin:auto;background:#1e1e1e;padding:30px;border-radius:12px;box-shadow:0 0 20px rgba(0,255,0,.2);border:1px solid #00ff00}
-        label{display:block;margin-top:20px;font-weight:bold;color:#00ff00}
-        input,select,datalist{width:100%;padding:12px;margin-top:8px;background:#2d2d2d;border:1px solid #00ff00;border-radius:6px;color:#e0e0e0;font-size:16px}
-        input:focus,select:focus{outline:none;box-shadow:0 0 8px rgba(0,255,0,.5)}
-        button{margin-top:30px;padding:14px 28px;background:#00ff00;color:#121212;font-weight:bold;font-size:18px;border:none;border-radius:8px;cursor:pointer;box-shadow:0 4px 15px rgba(0,255,0,.4);transition:all .3s;width:100%}
-        button:hover{background:#00cc00;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,255,0,.6)}
-        #result{margin-top:40px;padding:20px;background:#2d2d2d;border-radius:10px;border:1px solid #00ff00;display:none}
-        .note{font-size:.9em;color:#a0a0a0;margin-top:20px}
-        table{width:100%;border-collapse:collapse;margin-top:15px}
-        th,td{border:1px solid #00ff00;padding:12px;text-align:left}
-        th{background:#003300;color:#00ff00}
-        #historical{margin-top:40px}
-        #status{color:#ffaa00;margin-top:15px;font-weight:bold}
-        .fallback-note{color:#ffaa00;font-style:italic;margin-top:10px}
-        .lane-note{color:#00ffaa;font-style:italic;margin-top:10px}
-        .dim-note{color:#a0a0a0;font-size:0.9em;margin-top:5px}
+        body {font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #121212; color: #e0e0e0;}
+        h1 {text-align: center; color: #00ff00; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,255,0,0.3);}
+        .container {max-width: 900px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 0 20px rgba(0,255,0,0.2); border: 1px solid #00ff00;}
+        label {display: block; margin-top: 20px; font-weight: bold; color: #00ff00;}
+        input, select {width: 100%; padding: 12px; margin-top: 8px; background: #2d2d2d; border: 1px solid #00ff00; border-radius: 6px; color: #e0e0e0; font-size: 16px;}
+        input:focus, select:focus {outline: none; box-shadow: 0 0 8px rgba(0,255,0,0.5);}
+        button {margin-top: 30px; padding: 14px 28px; background: #00ff00; color: #121212; font-weight: bold; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,255,0,0.4); transition: all 0.3s; width: 100%;}
+        button:hover {background: #00cc00; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,255,0,0.6);}
+        #result {margin-top: 40px; padding: 20px; background: #2d2d2d; border-radius: 10px; border: 1px solid #00ff00; display: none;}
+        .note {font-size: 0.9em; color: #a0a0a0; margin-top: 20px;}
+        table {width: 100%; border-collapse: collapse; margin-top: 15px;}
+        th, td {border: 1px solid #00ff00; padding: 12px; text-align: left;}
+        th {background: #003300; color: #00ff00;}
+        #historical {margin-top: 40px;}
+        #status {color: #ffaa00; margin-top: 15px; font-weight: bold;}
+        .fallback-note {color: #ffaa00; font-style: italic;}
+        .lane-note {color: #00ffaa; font-style: italic;}
+        .dim-note {color: #a0a0a0; font-size: 0.9em; margin-top: 5px;}
     </style>
 </head>
 <body>
     <div class="container">
         <h1>TruckitRater</h1>
-        <p style="text-align:center;color:#a0a0a0">Dec 2025 national spot all-in rates (DAT/Truckstop). Lane adjustments for tight markets. Real distance via Google Maps (fallback straight-line). Diesel ~$3.58/gal.</p>
+        <p style="text-align:center;color:#a0a0a0">December 2025 national spot all-in rates (DAT/Truckstop trends). Lane adjustments for tight markets. Real driving distance via Google Maps (fallback to straight-line if unavailable). National diesel ~$3.58/gal.</p>
         
         <label for="origin">Origin (type to autocomplete):</label>
         <input type="text" id="origin" list="cities" placeholder="e.g., Chicago, IL">
@@ -114,7 +114,6 @@
             <option value="Long Beach, CA">
             <option value="Anaheim, CA">
             <option value="Santa Ana, CA">
-            <option value="Inland Empire, CA">
             <option value="Ontario, CA">
             <option value="Fontana, CA">
             <option value="San Bernardino, CA">
@@ -150,8 +149,6 @@
             <option value="Lexington, KY">
             <option value="Huntsville, AL">
             <option value="Montgomery, AL">
-            <option value="Little Rock, AR">
-            <option value="Shreveport, LA">
             <option value="Lafayette, LA">
             <option value="Lake Charles, LA">
             <option value="Beaumont, TX">
@@ -212,9 +209,10 @@
     <script>
         const API_KEY = "AIzaSyAcg4vGAUdJW7P2sWsa8Bs7v6DCrnj4SnQ";
         const baseAverages = {van:2.24, reefer:2.62, flatbed:2.52, stepdeck:2.70, conestoga:2.80, rgn:3.50};
-        let loaded = false, service;
+        let loaded = false;
+        let service;
 
-        // Tripled the city database (~180 major US freight markets/hubs)
+        // ~180 major freight cities (tripled from original)
         const cityCoords = {
             "chicago, il": {lat:41.8781, lng:-87.6298},
             "los angeles, ca": {lat:34.0522, lng:-118.2437},
@@ -331,18 +329,57 @@
             "lafayette, la": {lat:30.2241, lng:-92.0198},
             "lake charles, la": {lat:30.2266, lng:-93.2174},
             "beaumont, tx": {lat:30.0802, lng:-94.1266},
-            "port arthur, tx": {lat:29.8849, lng:-93.9399},
-            "inland empire, ca": {lat:34.0593, lng:-117.4132} // approximate for region
-            // Add more if needed – now over 180 entries!
+            "port arthur, tx": {lat:29.8849, lng:-93.9399}
         };
 
-        // ... rest of the script unchanged (lane adjustments, functions, calculateRate)
+        const laneAdjustments = {
+            van: {midwest:1.08, southeast:1.03, default:1.00},
+            reefer: {midwest:1.13, default:1.00},
+            flatbed: {southeast:1.05, midwest:1.05, default:1.00},
+            stepdeck: {default:1.07},
+            conestoga: {default:1.12},
+            rgn: {default:1.40}
+        };
 
-        // (Full script from previous version here – same as last, just with expanded cityCoords and datalist)
+        const regions = {
+            midwest: ["chicago, il","indianapolis, in","detroit, mi","cleveland, oh","columbus, oh","cincinnati, oh","milwaukee, wi","minneapolis, mn","st. louis, mo","kansas city, mo","omaha, ne"],
+            southeast: ["atlanta, ga","charlotte, nc","greensboro, nc","jacksonville, fl","tampa, fl","orlando, fl","miami, fl","memphis, tn","nashville, tn","savannah, ga"]
+        };
 
-        // For brevity, the rest of the script is identical to the previous version.
-        // It includes lane adjustments, haversine, fallback, loadMaps, calculateRate with trailerLength (ft) and weight checks.
+        function getRegion(cityKey) {
+            if (regions.midwest.includes(cityKey)) return 'midwest';
+            if (regions.southeast.includes(cityKey)) return 'southeast';
+            return 'default';
+        }
 
-    </script>
-</body>
-</html>
+        function getAdjustedRPM(eq, originKey, destKey) {
+            let rpm = baseAverages[eq] || baseAverages.van;
+            const adj = laneAdjustments[eq] || {default:1.00};
+            const originRegion = getRegion(originKey);
+            const destRegion = getRegion(destKey);
+
+            let multiplier = 1.00;
+            if (adj[originRegion]) multiplier = Math.max(multiplier, adj[originRegion]);
+            if (adj[destRegion]) multiplier = Math.max(multiplier, adj[destRegion]);
+            if (adj.default) multiplier = Math.max(multiplier, adj.default);
+
+            const adjusted = rpm * multiplier;
+            return {adjusted, note: multiplier > 1.00 ? `(adjusted +${Math.round((multiplier-1)*100)}% for market/lane)` : ''};
+        }
+
+        function haversineMiles(lat1, lon1, lat2, lon2) {
+            const R = 3958.8;
+            const toRad = deg => deg * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return Math.round(R * c);
+        }
+
+        function getCoords(cityStr) {
+            const key = cityStr.toLowerCase().trim();
+            return cityCoords[key] || null;
+        }
+
+        fun
