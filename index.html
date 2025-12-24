@@ -11,6 +11,8 @@
         label{display:block;margin-top:20px;font-weight:bold;color:#00ff00}
         input,select,datalist{width:100%;padding:12px;margin-top:8px;background:#2d2d2d;border:1px solid #00ff00;border-radius:6px;color:#e0e0e0;font-size:16px}
         input:focus,select:focus{outline:none;box-shadow:0 0 8px rgba(0,255,0,.5)}
+        .dim-group{display:flex;gap:10px;flex-wrap:wrap}
+        .dim-group input{width:calc(33% - 10px)}
         button{margin-top:30px;padding:14px 28px;background:#00ff00;color:#121212;font-weight:bold;font-size:18px;border:none;border-radius:8px;cursor:pointer;box-shadow:0 4px 15px rgba(0,255,0,.4);transition:all .3s;width:100%}
         button:hover{background:#00cc00;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,255,0,.6)}
         #result{margin-top:40px;padding:20px;background:#2d2d2d;border-radius:10px;border:1px solid #00ff00;display:none}
@@ -103,13 +105,13 @@
             <option value="rgn">RGN (Removable Gooseneck)</option>
         </select>
         
-        <p class="dim-note">Optional load details (for oversize/overload alerts):</p>
-        
-        <label for="trailerLength">Trailer Length (feet):</label>
-        <input type="number" id="trailerLength" placeholder="e.g., 53" min="1">
-        
-        <label for="weight">Weight (lbs):</label>
-        <input type="number" id="weight" placeholder="e.g., 45000" min="1">
+        <p class="dim-note">Enter cargo dimensions (inches) for oversize alerts (optional):</p>
+        <div class="dim-group">
+            <input type="number" id="length" placeholder="Length" min="1">
+            <input type="number" id="width" placeholder="Width" min="1">
+            <input type="number" id="height" placeholder="Height" min="1">
+        </div>
+        <input type="number" id="weight" placeholder="Weight (lbs, optional)" min="1" style="margin-top:10px">
         
         <label for="fuelPrice">Diesel Price ($/gal, current ~$3.58):</label>
         <input type="number" id="fuelPrice" value="3.58" step="0.01" min="2">
@@ -149,6 +151,7 @@
         const baseAverages = {van:2.24, reefer:2.62, flatbed:2.52, stepdeck:2.70, conestoga:2.80, rgn:3.50};
         let loaded = false, service;
 
+        // City database (60+ major markets)
         const cityCoords = {
             "chicago, il": {lat:41.8781, lng:-87.6298},
             "los angeles, ca": {lat:34.0522, lng:-118.2437},
@@ -206,6 +209,7 @@
             "norfolk, va": {lat:36.8508, lng:-76.2859}
         };
 
+        // Lane adjustments
         const laneAdjustments = {
             van: {midwest:1.08, southeast:1.03, default:1.00},
             reefer: {midwest:1.13, default:1.00},
@@ -286,7 +290,9 @@
             const dInput = document.getElementById('destination').value.trim();
             const eq = document.getElementById('equipment').value;
             const fuel = parseFloat(document.getElementById('fuelPrice').value) || 3.58;
-            const trailerLength = parseFloat(document.getElementById('trailerLength').value) || 0;
+            const length = parseFloat(document.getElementById('length').value) || 0;
+            const width = parseFloat(document.getElementById('width').value) || 0;
+            const height = parseFloat(document.getElementById('height').value) || 0;
             const weight = parseFloat(document.getElementById('weight').value) || 0;
             const stat = document.getElementById('status');
             const fallbackNote = document.getElementById('fallbackNote');
@@ -351,8 +357,8 @@
             const {adjusted: adjRPM, note: laneAdjNote} = getAdjustedRPM(eq, oKey, dKey);
 
             let osNote = '';
-            if (trailerLength > 53 || weight > 45000) {
-                osNote = 'Oversize/overload likely (length >53ft or weight >45k lbs) – permits/extra fees needed. Rate estimate higher.';
+            if (width > 102 || height > 108 || length > 636 || weight > 45000) {
+                osNote = 'Oversize load likely – permits/extra fees needed. Rate estimate higher.';
             }
 
             const allIn = Math.round(adjRPM * miles);
